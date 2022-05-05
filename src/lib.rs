@@ -26,14 +26,14 @@
 //! # Example
 //!
 //! ```
-//! use telestes::MediaType;
+//! use telestes::{MediaType, media};
 //!
-//! let mt = MediaType::new("text/plain; charset=UTF-8").unwrap();
-//! assert_eq!(mt, "text/plain; charset=UTF-8");
-//! assert_eq!(mt.essence(), "text/plain");
-//! assert_eq!(mt.essence().genus(), "text");
-//! assert_eq!(mt.essence().species(), "plain");
-//! assert_eq!(mt.parameters().get("charset"), Some("UTF-8"));
+//! const MT: MediaType<&'static str> = media!("text/plain; charset=UTF-8");
+//! assert_eq!(MT, "text/plain; charset=UTF-8");
+//! assert_eq!(MT.essence(), "text/plain");
+//! assert_eq!(MT.essence().genus(), "text");
+//! assert_eq!(MT.essence().species(), "plain");
+//! assert_eq!(MT.parameters().get("charset"), Some("UTF-8"));
 //! ```
 //!
 //! # Naming
@@ -86,4 +86,19 @@ struct Parsed {
     key: Range<usize>,
     val: Range<usize>,
     idx: RangeFrom<usize>,
+}
+
+/// A helper to easily create media types in const contexts
+///
+/// # Panics
+///
+/// This macro causes a compile-time panic when given an invalid Media Type.
+#[macro_export]
+macro_rules! media {
+    ($mime:literal) => {
+        match $crate::MediaType::new_const($mime) {
+            Err(..) => panic!(concat!("invalid media type: ", $mime)),
+            Ok(mt) => mt,
+        }
+    };
 }
