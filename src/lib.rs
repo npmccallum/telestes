@@ -77,6 +77,11 @@ use core::ops::{Range, RangeFrom};
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Error(pub usize);
 
+/// A trait associating a Media Type with a Rust type
+pub trait MediaTyped {
+    const MEDIA_TYPE: MediaType<&'static str>;
+}
+
 struct Parsed {
     key: Range<usize>,
     val: Range<usize>,
